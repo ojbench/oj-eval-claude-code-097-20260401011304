@@ -57,7 +57,7 @@ TreeNode* buildTree(const vector<int>& arr) {
     queue<TreeNode*> q;
     q.push(root);
 
-    int i = 1;
+    size_t i = 1;
     while (!q.empty() && i < arr.size()) {
         TreeNode* curr = q.front();
         q.pop();
@@ -89,62 +89,26 @@ void deleteTree(TreeNode* root) {
 }
 
 int main() {
-    string line;
+    int n; // number of elements in array
+    cin >> n;
 
-    // Read input
-    while (getline(cin, line)) {
-        if (line.empty()) continue;
-
-        // Parse input: "root = [12, 5, 18, 2, 9, 15, 20], cnt = 4"
-        size_t rootPos = line.find("root = [");
-        size_t cntPos = line.find("], cnt = ");
-
-        if (rootPos == string::npos || cntPos == string::npos) {
-            continue;
-        }
-
-        // Extract array part
-        size_t arrayStart = rootPos + 8; // length of "root = ["
-        string arrayStr = line.substr(arrayStart, cntPos - arrayStart);
-
-        // Parse array
-        vector<int> arr;
-        stringstream ss(arrayStr);
-        string token;
-        while (getline(ss, token, ',')) {
-            // Trim spaces
-            size_t start = token.find_first_not_of(" \t");
-            size_t end = token.find_last_not_of(" \t");
-            if (start != string::npos) {
-                token = token.substr(start, end - start + 1);
-                if (token == "null" || token == "None") {
-                    arr.push_back(-1);
-                } else {
-                    arr.push_back(stoi(token));
-                }
-            }
-        }
-
-        // Extract cnt
-        size_t cntStart = cntPos + 9; // length of "], cnt = "
-        string cntStr = line.substr(cntStart);
-        // Remove any trailing characters
-        size_t endPos = cntStr.find_first_not_of("0123456789");
-        if (endPos != string::npos) {
-            cntStr = cntStr.substr(0, endPos);
-        }
-        int cnt = stoi(cntStr);
-
-        // Build tree and find kth largest
-        TreeNode* root = buildTree(arr);
-        Solution solution;
-        int result = solution.kthLargest(root, cnt);
-
-        cout << result << endl;
-
-        // Clean up
-        deleteTree(root);
+    vector<int> arr(n);
+    for (int i = 0; i < n; i++) {
+        cin >> arr[i];
     }
+
+    int cnt;
+    cin >> cnt;
+
+    // Build tree and find kth largest
+    TreeNode* root = buildTree(arr);
+    Solution solution;
+    int result = solution.kthLargest(root, cnt);
+
+    cout << result << endl;
+
+    // Clean up
+    deleteTree(root);
 
     return 0;
 }
