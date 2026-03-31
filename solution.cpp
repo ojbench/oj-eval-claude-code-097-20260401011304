@@ -1,7 +1,6 @@
 #include <iostream>
 #include <vector>
 #include <queue>
-#include <memory>
 
 using namespace std;
 
@@ -11,6 +10,10 @@ struct TreeNode {
     TreeNode *left;
     TreeNode *right;
     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+    ~TreeNode() {
+        delete left;
+        delete right;
+    }
 };
 
 class Solution {
@@ -46,9 +49,9 @@ public:
     }
 };
 
-// Build tree from level-order array representation with null indicators
+// Build tree from level-order array representation
 TreeNode* buildTree(const vector<int>& arr) {
-    if (arr.empty() || arr[0] == 0) {
+    if (arr.empty() || arr[0] == -1) {
         return nullptr;
     }
 
@@ -63,7 +66,7 @@ TreeNode* buildTree(const vector<int>& arr) {
 
         // Left child
         if (i < arr.size()) {
-            if (arr[i] != 0) {
+            if (arr[i] != -1) {
                 curr->left = new TreeNode(arr[i]);
                 q.push(curr->left);
             }
@@ -72,7 +75,7 @@ TreeNode* buildTree(const vector<int>& arr) {
 
         // Right child
         if (i < arr.size()) {
-            if (arr[i] != 0) {
+            if (arr[i] != -1) {
                 curr->right = new TreeNode(arr[i]);
                 q.push(curr->right);
             }
@@ -83,37 +86,27 @@ TreeNode* buildTree(const vector<int>& arr) {
     return root;
 }
 
-// Free tree memory
-void deleteTree(TreeNode* root) {
-    if (root == nullptr) return;
-    deleteTree(root->left);
-    deleteTree(root->right);
-    delete root;
-}
-
 int main() {
-    int n; // number of elements in array
-    if (!(cin >> n)) {
-        return 0;
+    int n;
+    while (cin >> n) {
+        vector<int> arr(n);
+        for (int i = 0; i < n; i++) {
+            cin >> arr[i];
+        }
+
+        int cnt;
+        cin >> cnt;
+
+        // Build tree and find kth largest
+        TreeNode* root = buildTree(arr);
+        Solution solution;
+        int result = solution.kthLargest(root, cnt);
+
+        cout << result << endl;
+
+        // Clean up - destructor handles this recursively
+        delete root;
     }
-
-    vector<int> arr(n);
-    for (int i = 0; i < n; i++) {
-        cin >> arr[i];
-    }
-
-    int cnt;
-    cin >> cnt;
-
-    // Build tree and find kth largest
-    TreeNode* root = buildTree(arr);
-    Solution solution;
-    int result = solution.kthLargest(root, cnt);
-
-    cout << result << endl;
-
-    // Clean up
-    deleteTree(root);
 
     return 0;
 }
