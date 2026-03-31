@@ -1,8 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <queue>
-#include <sstream>
-#include <string>
+#include <memory>
 
 using namespace std;
 
@@ -47,9 +46,9 @@ public:
     }
 };
 
-// Build tree from level-order array representation
+// Build tree from level-order array representation with null indicators
 TreeNode* buildTree(const vector<int>& arr) {
-    if (arr.empty() || arr[0] == -1) {
+    if (arr.empty() || arr[0] == 0) {
         return nullptr;
     }
 
@@ -63,18 +62,22 @@ TreeNode* buildTree(const vector<int>& arr) {
         q.pop();
 
         // Left child
-        if (i < arr.size() && arr[i] != -1) {
-            curr->left = new TreeNode(arr[i]);
-            q.push(curr->left);
+        if (i < arr.size()) {
+            if (arr[i] != 0) {
+                curr->left = new TreeNode(arr[i]);
+                q.push(curr->left);
+            }
+            i++;
         }
-        i++;
 
         // Right child
-        if (i < arr.size() && arr[i] != -1) {
-            curr->right = new TreeNode(arr[i]);
-            q.push(curr->right);
+        if (i < arr.size()) {
+            if (arr[i] != 0) {
+                curr->right = new TreeNode(arr[i]);
+                q.push(curr->right);
+            }
+            i++;
         }
-        i++;
     }
 
     return root;
@@ -90,7 +93,9 @@ void deleteTree(TreeNode* root) {
 
 int main() {
     int n; // number of elements in array
-    cin >> n;
+    if (!(cin >> n)) {
+        return 0;
+    }
 
     vector<int> arr(n);
     for (int i = 0; i < n; i++) {
